@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hipicas Jonicio</title>
+  <meta name="description" content="Resultados de concursos de hípica - Hipicas Jonicio" />
+  <style>
+    :root{
+      --bg:#0f1a1a;
+      --card:#142424;
+      --accent:#c19a6b;
+      --accent-2:#e5d2b8;
+      --text:#f6f3ee;
+      --muted:#cfd7d2;
+      --danger:#b34747;
+      --ok:#3aa37a;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,'Helvetica Neue',Arial,sans-serif}
+    a{color:var(--accent);text-decoration:none}
+    a:hover{text-decoration:underline}
+    header{
+      background:linear-gradient(135deg, rgba(193,154,107,.25), rgba(20,36,36,.6)), url('https://images.unsplash.com/photo-1516387938699-a93567ec168e?q=80&w=1920&auto=format&fit=crop') center/cover no-repeat;
+      min-height:240px; display:flex; align-items:center; justify-content:center; text-align:center; position:relative; overflow:hidden;
+      border-bottom:1px solid #1f3434;
+    }
+    header::after{
+      content:""; position:absolute; inset:0; background:radial-gradient(70% 70% at 50% 10%, rgba(20,36,36,.3), rgba(15,26,26,.8) 70%);
+    }
+    .hero{
+      position:relative; padding:24px; z-index:1; max-width:1000px;
+    }
+    .brand{font-size:40px; margin:0; letter-spacing:.8px}
+    .subtitle{margin:8px 0 0; color:var(--muted)}
+    .container{max-width:1100px; margin:0 auto; padding:24px}
+    .card{
+      background:var(--card); border:1px solid #1f3434; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,.25);
+    }
+    .grid{
+      display:grid; gap:20px; grid-template-columns:repeat(12, 1fr);
+    }
+    .panel{grid-column:span 12}
+    @media(min-width:900px){
+      .panel{grid-column:span 8}
+      .side{grid-column:span 4}
+    }
+    .section-title{
+      margin:0 0 12px; padding:14px 18px; border-bottom:1px solid #213636; font-size:18px; background:rgba(20,36,36,.4); border-radius:14px 14px 0 0;
+    }
+    .content{padding:18px}
+    .row{display:flex; gap:12px; flex-wrap:wrap}
+    .input, select, button{
+      background:#0e1919; color:var(--text); border:1px solid #213636; border-radius:10px; padding:10px 12px; outline:none;
+    }
+    .input:focus, select:focus{border-color:var(--accent)}
+    button{cursor:pointer}
+    .btn{
+      background:linear-gradient(180deg, #1b2f2f, #0e1919); border:1px solid #2a4444;
+    }
+    .btn-accent{
+      background:linear-gradient(180deg, #d3b089, #c19a6b); color:#1b1b1b; border:1px solid #a88255; font-weight:600;
+    }
+    .btn-danger{background:linear-gradient(180deg, #b34747, #933b3b); border:1px solid #7a2f2f; color:#fff}
+    .pill{display:inline-block; padding:6px 10px; border:1px solid #2a4444; border-radius:999px; background:#0e1919; color:var(--muted); font-size:12px}
+    .list{list-style:none; padding:0; margin:0}
+    .list-item{padding:10px 12px; border:1px solid #213636; border-radius:10px; background:#0e1919}
+    .muted{color:var(--muted)}
+    .foot{margin-top:16px; display:flex; gap:10px; align-items:center}
+    .kbd{background:#0e1919; border:1px solid #213636; padding:2px 6px; border-radius:6px; font-size:12px}
+    .hidden{display:none !important}
+    .badge{display:inline-flex; gap:8px; align-items:center}
+    .empty{padding:20px; color:var(--muted)}
+    .divider{height:1px; background:#213636; margin:12px 0}
+    .item-header{display:flex; justify-content:space-between; align-items:center}
+    .file-link{display:inline-flex; align-items:center; gap:8px}
+    .file-link svg{width:16px; height:16px}
+    .help{font-size:12px; color:var(--muted)}
+    .login-status{font-size:14px; color:var(--muted)}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <h1 class="brand">Hipicas Jonicio</h1>
+      <p class="subtitle">Resultados de concursos de hípica, categorías y documentos oficiales</p>
+      <div class="foot">
+        <span class="pill">Tema: Caballos</span>
+        <span class="pill">Subida de archivos</span>
+        <span class="pill">Admin protegido</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="grid">
+      <!-- Panel público: categorías y resultados -->
+      <section class="card panel">
+        <h2 class="section-title">Resultados por categoría</h2>
+        <div class="content">
+          <div class="row" style="align-items:center; justify-content:space-between">
+            <div class="badge">
+              <strong class="muted">Categoría seleccionada:</strong>
+              <select id="categorySelect" aria-label="Seleccionar categoría"></select>
+            </div>
+            <span id="loginStatus" class="login-status"></span>
+          </div>
+
+          <div id="resultsContainer" style="margin-top:12px"></div>
+
+          <div class="divider"></div>
+
+          <div id="publicUpload" class="hidden">
+            <h3 style="margin:0 0 8px">Subir archivos a esta categoría</h3>
+            <p class="help">Tipos admitidos: PDF, imágenes, CSV, DOCX, etc. Se guardará el nombre y un enlace de descarga local.</p>
+            <div class="row">
+              <input id="fileInput" class="input" type="file" multiple />
+              <button id="uploadBtn" class="btn btn-accent">Subir a categoría</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Panel lateral: Administración -->
+      <aside class="card side">
+        <h2 class="section-title">Administración</h2>
+        <div class="content">
+          <div id="loginPanel">
+            <p class="help">Acceso restringido para crear categorías y gestionar archivos.</p>
+            <div class="row">
+              <input id="userInput" class="input" type="text" placeholder="Usuario administrador" autocomplete="username" />
+              <input id="passInput" class="input" type="password" placeholder="Contraseña" autocomplete="current-password" />
+            </div>
+            <div class="row" style="margin-top:10px">
+              <button id="loginBtn" class="btn btn-accent">Entrar</button>
+              <button id="logoutBtn" class="btn btn-danger hidden">Salir</button>
+            </div>
+          </div>
+
+          <div id="adminPanel" class="hidden" style="margin-top:16px">
+            <h3 style="margin:0 0 8px">Crear nueva categoría</h3>
+            <div class="row">
+              <input id="newCategoryInput" class="input" type="text" placeholder="Nombre de la categoría (ej. Salto 1,10 m)" />
+              <button id="createCategoryBtn" class="btn">Crear</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3 style="margin:0 0 8px">Gestión de archivos</h3>
+            <p class="help">Sube documentos directamente a la categoría seleccionada en el panel principal.</p>
+            <ul id="adminFileList" class="list"></ul>
+
+            <div class="divider"></div>
+
+            <h3 style="margin:0 0 8px">Herramientas</h3>
+            <div class="row">
+              <button id="exportBtn" class="btn">Exportar datos</button>
+              <button id="importBtn" class="btn">Importar datos</button>
+              <input id="importInput" class="hidden" type="file" accept="application/json" />
+            </div>
+            <p class="help">La información se guarda en este navegador mediante localStorage. Exporta para respaldos o mueve los datos a otro equipo.</p>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <footer class="container" style="padding-bottom:40px">
+    <div class="card content">
+      <p class="muted">© Hipicas Jonicio — Resultados de concursos de hípica. Este sitio guarda datos localmente en tu navegador.</p>
+      <p class="help">Consejo: usa Exportar/Importar para compartir o respaldar los datos. Si sirves el sitio desde un hosting, los enlaces de archivos funcionarán mientras el navegador mantenga la sesión y permisos.</p>
+    </div>
+  </footer>
+
+  <script>
+    // --- Estado y utilidades ---
+    const STORAGE_KEY = 'hipicas_jonicio_data_v1';
+    const AUTH_USER = 'administrador'; // Texto solicitado: “Usuario administrador”
+    const AUTH_PASS = 'admin';         // Contraseña: “admin”
+
+    const state = {
+      admin: false,
+      data: {
+        categories: [], // { id, name, files: [{name, url, size, type, date}] }
+        selectedCategoryId: null
+      }
+    };
+
+    function uid(){
+      return Math.random().toString(36).slice(2) + Date.now().toString(36);
+    }
+    function save(){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state.data));
+      render();
+    }
+    function load(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(raw){
+        try{
+          const parsed = JSON.parse(raw);
+          if(parsed && Array.isArray(parsed.categories)){
+            state.data = parsed;
+          }
+        }catch(e){
+          console.warn('No se pudo cargar datos:', e);
+        }
+      }
+      if(!state.data.categories.length){
+        // Categorías iniciales de ejemplo
+        state.data.categories = [
+          { id: uid(), name: 'Salto 1,00 m', files: [] },
+          { id: uid(), name: 'Salto 1,20 m', files: [] },
+          { id: uid(), name: 'Doma Clásica', files: [] },
+        ];
+        state.data.selectedCategoryId = state.data.categories[0].id;
+      }else if(!state.data.selectedCategoryId){
+        state.data.selectedCategoryId = state.data.categories[0]?.id || null;
+      }
+    }
+
+    // --- Render ---
+    const categorySelect = document.getElementById('categorySelect');
+    const resultsContainer = document.getElementById('resultsContainer');
+    const publicUpload = document.getElementById('publicUpload');
+    const adminFileList = document.getElementById('adminFileList');
+    const loginStatus = document.getElementById('loginStatus');
+
+    function formatBytes(bytes){
+      if(!Number.isFinite(bytes)) return '';
+      const units = ['B','KB','MB','GB'];
+      let i=0, v=bytes;
+      while(v>=1024 && i<units.length-1){ v/=1024; i++; }
+      return v.toFixed(v<10?2:0) + ' ' + units[i];
+    }
+    function getSelectedCategory(){
+      return state.data.categories.find(c=>c.id===state.data.selectedCategoryId) || null;
+    }
+
+    function renderCategories(){
+      categorySelect.innerHTML = '';
+      state.data.categories.forEach(cat=>{
+        const opt = document.createElement('option');
+        opt.value = cat.id;
+        opt.textContent = cat.name;
+        categorySelect.appendChild(opt);
+      });
+      if(state.data.selectedCategoryId){
+        categorySelect.value = state.data.selectedCategoryId;
+      }
+    }
+
+    function renderResults(){
+      const cat = getSelectedCategory();
+      if(!cat){
+        resultsContainer.innerHTML = '<div class="empty">No hay categorías disponibles.</div>';
+        adminFileList.innerHTML = '';
+        return;
+      }
+      if(!cat.files.length){
+        resultsContainer.innerHTML = '<div class="empty">Sin archivos en esta categoría. Los administradores pueden subir documentos desde el panel de la derecha o aquí mismo.</div>';
+        adminFileList.innerHTML = '';
+      }else{
+        const list = document.createElement('ul');
+        list.className = 'list';
+        cat.files.forEach((f, idx)=>{
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          const head = document.createElement('div');
+          head.className = 'item-header';
+
+          const left = document.createElement('div');
+          left.className = 'file-link';
+          left.innerHTML = `
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z" stroke="#c19a6b" stroke-width="1.2"/>
+              <path d="M14 2v6h6" stroke="#c19a6b" stroke-width="1.2"/>
+            </svg>
+            <a href="${f.url}" download="${f.name}" title="Descargar">${f.name}</a>
+          `;
+          const right = document.createElement('div');
+          right.innerHTML = `
+            <span class="muted">${f.type || 'archivo'}</span>
+            <span class="kbd">${formatBytes(f.size)}</span>
+            <span class="kbd">${new Date(f.date).toLocaleString()}</span>
+          `;
+          head.appendChild(left);
+          head.appendChild(right);
+          li.appendChild(head);
+
+          if(state.admin){
+            const actions = document.createElement('div');
+            actions.className = 'foot';
+            const delBtn = document.createElement('button');
+            delBtn.className = 'btn btn-danger';
+            delBtn.textContent = 'Eliminar';
+            delBtn.addEventListener('click', ()=>{
+              cat.files.splice(idx,1);
+              save();
+            });
+            actions.appendChild(delBtn);
+            li.appendChild(actions);
+          }
+          list.appendChild(li);
+        });
+        resultsContainer.innerHTML = '';
+        resultsContainer.appendChild(list);
+
+        // Admin list mirror
+        adminFileList.innerHTML = '';
+        cat.files.forEach((f, idx)=>{
+          const li = document.createElement('li');
+          li.className = 'list-item';
+          li.innerHTML = `
+            <div class="item-header">
+              <strong>${f.name}</strong>
+              <span class="muted">${formatBytes(f.size)} · ${f.type || 'archivo'}</span>
+            </div>
+          `;
+          adminFileList.appendChild(li);
+        });
+      }
+
+      // Toggle upload area based on admin
+      publicUpload.classList.toggle('hidden', !state.admin);
+      loginStatus.textContent = state.admin ? 'Modo administrador activo' : 'Modo lectura (público)';
+    }
+
+    function render(){
+      renderCategories();
+      renderResults();
+      // Admin panel visibility
+      document.getElementById('adminPanel').classList.toggle('hidden', !state.admin);
+      document.getElementById('logoutBtn').classList.toggle('hidden', !state.admin);
+    }
+
+    // --- Eventos UI ---
+    categorySelect.addEventListener('change', ()=>{
+      state.data.selectedCategoryId = categorySelect.value;
+      save();
+    });
+
+    const fileInput = document.getElementById('fileInput');
+    const uploadBtn = document.getElementById('uploadBtn');
+    uploadBtn.addEventListener('click', async ()=>{
+      if(!state.admin){
+        alert('Debes iniciar sesión como administrador para subir archivos.');
+        return;
+      }
+      const cat = getSelectedCategory();
+      if(!cat){ alert('Selecciona una categoría.'); return; }
+      const files = Array.from(fileInput.files || []);
+      if(!files.length){ alert('Elige al menos un archivo.'); return; }
+
+      // Convertimos a blob URLs (quedan accesibles localmente mientras dure la sesión)
+      const additions = files.map(f=>{
+        const url = URL.createObjectURL(f);
+        return {
+          name: f.name,
+          url,
+          size: f.size,
+          type: f.type,
+          date: Date.now()
+        };
+      });
+      cat.files.push(...additions);
+      fileInput.value = '';
+      save();
+    });
+
+    const loginBtn = document.getElementById('loginBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    loginBtn.addEventListener('click', ()=>{
+      const u = document.getElementById('userInput').value.trim();
+      const p = document.getElementById('passInput').value;
+      if(u === AUTH_USER && p === AUTH_PASS){
+        state.admin = true;
+        document.getElementById('userInput').value = '';
+        document.getElementById('passInput').value = '';
+        render();
+      }else{
+        alert('Credenciales incorrectas.');
+      }
+    });
+    logoutBtn.addEventListener('click', ()=>{
+      state.admin = false;
+      render();
+    });
+
+    const createCategoryBtn = document.getElementById('createCategoryBtn');
+    createCategoryBtn.addEventListener('click', ()=>{
+      if(!state.admin){ alert('Solo administradores pueden crear categorías.'); return; }
+      const name = document.getElementById('newCategoryInput').value.trim();
+      if(!name){ alert('Introduce un nombre de categoría.'); return; }
+      const exists = state.data.categories.some(c => c.name.toLowerCase() === name.toLowerCase());
+      if(exists){ alert('Ya existe una categoría con ese nombre.'); return; }
+      const cat = { id: uid(), name, files: [] };
+      state.data.categories.push(cat);
+      state.data.selectedCategoryId = cat.id;
+      document.getElementById('newCategoryInput').value = '';
+      save();
+    });
+
+    // Exportar/Importar
+    const exportBtn = document.getElementById('exportBtn');
+    const importBtn = document.getElementById('importBtn');
+    const importInput = document.getElementById('importInput');
+
+    exportBtn.addEventListener('click', ()=>{
+      const dataStr = JSON.stringify(state.data, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'hipicas-jonicio-datos.json';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    importBtn.addEventListener('click', ()=>{
+      importInput.click();
+    });
+    importInput.addEventListener('change', async ()=>{
+      const file = importInput.files[0];
+      if(!file) return;
+      try{
+        const text = await file.text();
+        const json = JSON.parse(text);
+        if(json && Array.isArray(json.categories)){
+          state.data = json;
+          save();
+        }else{
+          alert('El archivo no contiene datos válidos.');
+        }
+      }catch(e){
+        alert('No se pudo importar el archivo.');
+      }finally{
+        importInput.value = '';
+      }
+    });
+
+    // Inicializar
+    load();
+    render();
+
+    // Consejo de accesibilidad: permitir borrar categoría (solo admin)
+    // Mantener simple: botón contextual con confirmación
+    // (Opcional) Descomenta si lo necesitas:
+    // function deleteCurrentCategory(){
+    //   if(!state.admin) return;
+    //   const cat = getSelectedCategory();
+    //   if(!cat) return;
+    //   if(confirm('¿Eliminar la categoría "'+cat.name+'"? Se perderán sus archivos.')){
+    //     state.data.categories = state.data.categories.filter(c=>c.id!==cat.id);
+    //     state.data.selectedCategoryId = state.data.categories[0]?.id || null;
+    //     save();
+    //   }
+    // }
+
+  </script>
+</body>
+</html>
